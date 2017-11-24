@@ -7,21 +7,40 @@
 		"> 1%"
 	],
 	"scripts": {
-		"start": "babel-node src",
-		"test": "eslint src && jest --coverage",
+		"start": "yarn dev:start",
+		"dev:start": "nodemon -e js,jsx --ignore lib --ignore dist --exec babel-node src/server",
+		"dev:wds": "webpack-dev-server --progress",
+		"prod:build": "rimraf lib dist && babel src -d lib --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
+		"prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
+		"prod:stop": "pm2 delete server",
+		"lint": "eslint src webpack.config.babel.js --ext .js,.jsx",
+		"test": "yarn lint && jest --coverage",
 		"precommit": "yarn test",
-		"prepush": "yarn test"
+		"prepush": "yarn test && yarn prod:build"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
+		"babel-core": "^6.26.0",
 		"babel-jest": "^21.2.0",
+		"babel-loader": "^7.1.2",
 		"babel-preset-env": "^1.6.1",
+		"cross-env": "^5.1.1",
 		"eslint": "^4.9.0",
 		"eslint-config-airbnb": "^16.1.0",
 		"eslint-plugin-import": "^2.7.0",
 		"eslint-plugin-jsx-a11y": "^6.0.2",
 		"eslint-plugin-react": "^7.4.0",
 		"husky": "^0.14.3",
-		"jest": "^21.2.1"
+		"jest": "^21.2.1",
+		"nodemon": "^1.12.1",
+		"pm2": "^2.8.0",
+		"rimraf": "^2.6.2",
+		"webpack": "^3.8.1",
+		"webpack-dev-server": "^2.9.4"
+	},
+	"dependencies": {
+		"babel-polyfill": "^6.26.0",
+		"compression": "^1.7.1",
+		"express": "^4.16.2"
 	}
 }
