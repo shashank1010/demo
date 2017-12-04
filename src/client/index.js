@@ -1,5 +1,9 @@
-import 'babel-polyfill'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
 import { APP_CONTAINER_SELECTOR } from '../shared/config'
 
-document.querySelector(APP_CONTAINER_SELECTOR).innerHTML = '<h1>Hello Shashank!</h1>'
+import "./styles/app.scss";
+
+ReactDOM.render(<App />, document.getElementById('root'));
