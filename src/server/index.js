@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 
 app.use("/api", (req, res, next) => {
 	if(!(req.session && req.session.token)){
-		if((req.body && req.body.code) || req.session.query.code){
+		if((req.body && req.body.code) || (req.session && req.session.query && req.session.query.code)){
 			validateAuthToken(req, res);
 		} else {
 			getAuthToken(req, res);
@@ -71,6 +71,12 @@ app.get('api/generateURL', (req, res) => {
 
 app.get('/api/labels', (req, res) => {
 	gmailAuth.listLabels((response) => {
+		res.send(response);
+	});
+});
+
+app.get('/api/emails', (req, res) => {
+	gmailAuth.listEmails((response) => {
 		res.send(response);
 	});
 });

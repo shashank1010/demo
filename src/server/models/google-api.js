@@ -27,7 +27,7 @@ function gAuth(token) {
 				}
 				req.session.token = token;
 				this.oauth2Client.credentials = token;
-				this.listLabels(cb)
+				cb({authorized: true});
 			});
 	}
 
@@ -55,17 +55,46 @@ function gAuth(token) {
 			});
 	}
 
+
+	//Work in Progress -- Please Skip
+	this.listEmails = (cb) => {
+		debugger;
+			const gmail = google.gmail('v1');
+			gmail.users.messages.list({
+				auth: this.oauth2Client,
+				userId: 'me',
+			}, function(err, response) {
+				if (err) {
+					console.log(`The API returned an error. ${err}`);
+					return cb({status: 400, message: `The API returned an error.`, error: err});
+				}
+				debugger;
+				var emails = response.messages;
+				if (emails.length == 0) {
+					console.log('No emails found.');
+				} else {
+					console.log('Labels:');
+					for (var i = 0; i < emails.length; i++) {
+						var email = emails[i];
+						console.log('- %s', email.name);
+					}
+				}
+				cb({emails: response.emails, authorized: true});
+			});
+	}
+	//Continue Here
+
 	const clientSecret = credentials.installed.client_secret;
 	const clientId = credentials.installed.client_id;
 	const redirectUrl = credentials.installed.redirect_uris[1];
 	const auth = new googleAuth();
 	this.oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
-	// Check if we have previously stored a token.
 	return {
 		getNewToken: this.getNewToken,
 		authorizationCode: this.authorizationCode,
 		listLabels: this.listLabels,
+		listEmails: this.listEmails,
 		oauth2Client: this.oauth2Client,
 	}
 }
